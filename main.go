@@ -122,6 +122,13 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
+	if fullCommand == "restaurant" {
+		_, err := s.ChannelMessageSend(m.ChannelID, restaurants[rand.Int()%len(foods)])
+		if err != nil {
+			log.WithError(err).Errorf("Error handling command %s", fullCommand)
+		}
+	}
+
 	splitCommand := strings.Split(fullCommand, ".")
 	if fullCommand == splitCommand[0] {
 		return
@@ -138,8 +145,6 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 	command := splitCommand[1][:endOfCommand]
-
-
 
 	var cmdFound bool
 	var cmdGroupFound bool
