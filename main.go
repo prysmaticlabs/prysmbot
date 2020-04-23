@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"math/rand"
 	"os"
 	"os/signal"
 	"strings"
@@ -86,28 +85,14 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	fullCommand := m.Content[1:]
 	// If the message is "ping" reply with "Pong!"
 	if fullCommand == "ping" {
-		s.ChannelMessageSend(m.ChannelID, "Pong!")
+		_, err := s.ChannelMessageSend(m.ChannelID, "Pong!")
+		if err != nil {
+			log.WithError(err).Errorf("Error sending embed %s", fullCommand)
+		}
 		return
 	}
-
 	if fullCommand == "help" {
-		embed := &discordgo.MessageEmbed{}
-		embed.Title = "PrysmBot help"
-		embed.Footer = &discordgo.MessageEmbedFooter{
-			Text: "Powered by the Topaz Testnet",
-			IconURL: "https://prysmaticlabs.com/assets/PrysmStripe.png",
-		}
-
-		var fields []*discordgo.MessageEmbedField
-		for _, flag := range allFlagGroups {
-				field := &discordgo.MessageEmbedField{
-					Name: flag.displayName,
-					Value: fmt.Sprintf(flag.helpText, fmt.Sprintf("`!%s.help`", flag.name)),
-					Inline:  false,
-				}
-				fields = append(fields, field)
-		}
-		embed.Fields = fields
+		embed := fullHelpEmbed()
 		_, err := s.ChannelMessageSendEmbed(m.ChannelID, embed)
 		if err != nil {
 			log.WithError(err).Errorf("Error sending embed %s", fullCommand)
@@ -115,17 +100,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if fullCommand == "food" {
-		_, err := s.ChannelMessageSend(m.ChannelID, foods[rand.Int()%len(foods)])
+	if isRandomCommand(fullCommand) {
+		result := getRandomResult(fullCommand)
+		_, err := s.ChannelMessageSend(m.ChannelID, result)
 		if err != nil {
 			log.WithError(err).Errorf("Error handling command %s", fullCommand)
-		}
-	}
-
-	if fullCommand == "restaurant" {
-		_, err := s.ChannelMessageSend(m.ChannelID, restaurants[rand.Int()%len(foods)])
-		if err != nil {
-			log.WithError(err).Errorf("Error handling command %s", fullCommand)
+			return
 		}
 	}
 
@@ -153,7 +133,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if flagGroup.name == commandGroup || flagGroup.shorthand == commandGroup {
 			cmdGroupFound = true
 			reqGroup = flagGroup
-			for _, cmd := range reqGroup.flags {
+			for _, cmd := range reqGroup.commands {
 				if command == cmd.command || command == cmd.shorthand || command == "help"{
 					cmdFound = true
 				}
@@ -165,39 +145,23 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if command == "help" {
-		embed := &discordgo.MessageEmbed{}
-		embed.Title = fmt.Sprintf("%s command help", reqGroup.displayName)
-		embed.Footer = &discordgo.MessageEmbedFooter{
-			Text: "Powered by the Topaz Testnet",
-			IconURL: "https://prysmaticlabs.com/assets/PrysmStripe.png",
-		}
-
-		var fields []*discordgo.MessageEmbedField
-		for _, flag := range reqGroup.flags {
-			field := &discordgo.MessageEmbedField{
-				Name: fmt.Sprintf("!%s.%s", reqGroup.name, flag.command),
-				Value: flag.helpText,
-				Inline:  false,
-			}
-			fields = append(fields, field)
-		}
-		embed.Fields = fields
+		embed := specificHelpEmbed(reqGroup)
 		_, err := s.ChannelMessageSendEmbed(m.ChannelID, embed)
 		if err != nil {
 			log.WithError(err).Errorf("Error sending embed %s", fullCommand)
-			return
 		}
+		return
 	}
 
 	var result string
 	switch commandGroup {
-	case currentFlagGroup.name, currentFlagGroup.shorthand:
+	case currentCommandGroup.name, currentCommandGroup.shorthand:
 		result = getHeadCommandResult(command)
-	case stateFlagGroup.name, stateFlagGroup.shorthand:
+	case stateCommandGroup.name, stateCommandGroup.shorthand:
 		result = getStateCommandResult(command, parameters)
-	case valFlagGroup.name, valFlagGroup.shorthand:
+	case valCommandGroup.name, valCommandGroup.shorthand:
 		result = getValidatorCommandResult(command, parameters)
-	case blockFlagGroup.name, blockFlagGroup.shorthand:
+	case blockCommandGroup.name, blockCommandGroup.shorthand:
 		result = getBlockCommandResult(command, parameters)
 	default:
 		result = "Command not found, sorry!"

@@ -1,11 +1,11 @@
 package main
 
 type botCommandGroup struct {
-	name string
+	name        string
 	displayName string
-	shorthand string
-	helpText string
-	flags []*botCommand
+	shorthand   string
+	helpText    string
+	commands    []*botCommand
 }
 
 type botCommand struct {

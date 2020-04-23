@@ -50,7 +50,6 @@ var restaurants = []string{
 	"Olive Garden",
 	"Pollo Tropical",
 	"BurgerFi",
-	"Chicken Wings",
 	"Zaxby's",
 	"MOD Pizza",
 	"Papa Johns",

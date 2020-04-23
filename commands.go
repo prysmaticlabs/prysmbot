@@ -105,15 +105,31 @@ var (
 		helpText: "Retrieves proposer index of requested block",
 		responseText: "Proposer index of block slot %d is %d.",
 	}
+
+	// Random commands.
+	randomFood = &botCommand{
+		group: "random",
+		command: "food",
+		shorthand: "f",
+		helpText: "Gets a random food to help Preston decide lunch.",
+		responseText: "%s",
+	}
+	randomRestaurant = &botCommand{
+		group: "random",
+		command: "restaurant",
+		shorthand: "r",
+		helpText: "Gets a random restaurant to help decide where to eat.",
+		responseText: "%s",
+	}
 )
 
 var (
-	currentFlagGroup = &botCommandGroup{
+	currentCommandGroup = &botCommandGroup{
 		name: "current",
 		shorthand: "c",
 		displayName: "Head State Info",
 		helpText: "Use %s to get info about head state.",
-		flags: []*botCommand{
+		commands: []*botCommand{
 			headSlot,
 			headEpoch,
 			headJustifiedEpoch,
@@ -123,42 +139,52 @@ var (
 			currentParticipation,
 		},
 	}
-	stateFlagGroup = &botCommandGroup{
+	stateCommandGroup = &botCommandGroup{
 		name: "state",
 		shorthand: "s",
 		displayName: "Beacon State Info",
 		helpText: "Use %s to query information derived from the beacon state.",
-		flags: []*botCommand{
+		commands: []*botCommand{
 			genesisTime,
 			beaconCommittee,
 		},
 	}
-	valFlagGroup = &botCommandGroup{
+	valCommandGroup = &botCommandGroup{
 		name: "val",
 		shorthand: "v",
 		displayName: "Validator Info",
 		helpText: "Use %s to retrieve information of validators in the validator set.",
-		flags: []*botCommand{
+		commands: []*botCommand{
 			validatorBalance,
 			validatorActive,
 			validatorSlashed,
 		},
 	}
-	blockFlagGroup = &botCommandGroup{
+	blockCommandGroup = &botCommandGroup{
 		name: "block",
 		shorthand: "b",
 		displayName: "Beacon Block Info",
 		helpText: "Use %s to view data on historical blocks.",
-		flags: []*botCommand{
+		commands: []*botCommand{
 			blockGraffiti,
 			blockProposer,
+		},
+	}
+	randomCommandGroup = &botCommandGroup{
+		displayName: "Random",
+		name: "random",
+		helpText: "Use %s to see random commands available.",
+		commands: []*botCommand{
+			randomFood,
+			randomRestaurant,
 		},
 	}
 )
 
 var allFlagGroups = []*botCommandGroup{
-	currentFlagGroup,
-	stateFlagGroup,
-	valFlagGroup,
-	blockFlagGroup,
+	currentCommandGroup,
+	stateCommandGroup,
+	valCommandGroup,
+	blockCommandGroup,
+	randomCommandGroup,
 }
