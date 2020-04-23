@@ -69,7 +69,7 @@ func main() {
 // This function will be called (due to AddHandler above) every time a new
 // message is created on any channel that the autenticated bot has access to.
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.ChannelID != "691473296696410164" && m.ChannelID != "701148358445760573" {
+	if !whitelistedChannel(m.ChannelID)  {
 		return
 	}
 	// Ignore all messages created by the bot itself
@@ -77,7 +77,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-	// If the message is "ping" reply with "Pong!"
+	// Ignore all messages that don't start with "!".
 	if !strings.HasPrefix(m.Content, "!") {
 		return
 	}
@@ -173,5 +173,20 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if err != nil {
 		log.WithError(err).Errorf("Error handling command %s", fullCommand)
 		return
+	}
+}
+
+func whitelistedChannel(channelID string) bool {
+	switch channelID {
+	case "691473296696410164":
+		return true
+	case "701148358445760573":
+		return true
+	case "476588476393848832": // #general in Prsym Discord.
+		return true
+	case "696886109589995521": // #random in Prsym Discord.
+		return true
+	default:
+		return false
 	}
 }
