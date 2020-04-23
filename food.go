@@ -6,6 +6,7 @@ var foods = []string{
 	"Sandwich",
 	"Spaghetti",
 	"Wonton Soup",
+	"Baked Beans",
 	"Pho",
 	"Ramen",
 	"Chicken Sandwich",
