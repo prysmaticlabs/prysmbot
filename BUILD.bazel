@@ -1,0 +1,122 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_push", "container_image")
+load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
+load("@io_bazel_rules_docker//contrib:passwd.bzl", "passwd_entry", "passwd_file")
+
+# gazelle:prefix gitlab.com/prysmaticlabs/prysmbot
+gazelle(name = "gazelle")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "block.go",
+        "commands.go",
+        "current.go",
+        "food.go",
+        "help.go",
+        "main.go",
+        "random.go",
+        "state.go",
+        "types.go",
+        "validator.go",
+    ],
+    importpath = "gitlab.com/prysmaticlabs/prysmbot",
+    visibility = ["//visibility:private"],
+    deps = [
+        "@com_github_bwmarrin_discordgo//:go_default_library",
+        "@com_github_gogo_protobuf//types:go_default_library",
+        "@com_github_prysmaticlabs_ethereumapis//eth/v1alpha1:go_default_library",
+        "@com_github_prysmaticlabs_prysm//shared/params:go_default_library",
+        "@com_github_sirupsen_logrus//:go_default_library",
+        "@com_github_wealdtech_go_bytesutil//:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "prysmbot",
+    embed = [":go_default_library"],
+    visibility = ["//visibility:public"],
+)
+
+go_image(
+    name = "go_image",
+    base = ":go_image_base",
+    srcs = [
+        "block.go",
+        "commands.go",
+        "current.go",
+        "food.go",
+        "help.go",
+        "main.go",
+        "random.go",
+        "state.go",
+        "types.go",
+        "validator.go",
+    ],
+    importpath = "gitlab.com/prysmaticlabs/prysmbot",
+    visibility = ["//visibility:private"],
+    deps = [
+        "@com_github_bwmarrin_discordgo//:go_default_library",
+        "@com_github_gogo_protobuf//types:go_default_library",
+        "@com_github_prysmaticlabs_ethereumapis//eth/v1alpha1:go_default_library",
+        "@com_github_prysmaticlabs_prysm//shared/params:go_default_library",
+        "@com_github_sirupsen_logrus//:go_default_library",
+        "@com_github_wealdtech_go_bytesutil//:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+    ],
+)
+
+################################################################################
+##                      Docker images as non-root user                        ##
+################################################################################
+
+# Create a passwd file with a root and nonroot user and uid.
+passwd_entry(
+    name = "root_user",
+    gid = 0,
+    uid = 0,
+    username = "root",
+)
+
+passwd_entry(
+    name = "nonroot_user",
+    info = "nonroot",
+    uid = 1001,
+    username = "nonroot",
+)
+
+passwd_file(
+    name = "passwd",
+    entries = [
+        ":root_user",
+        ":nonroot_user",
+    ],
+)
+
+# Create a tar file containing the created passwd file
+pkg_tar(
+    name = "passwd_tar",
+    srcs = [":passwd"],
+    mode = "0o644",
+    package_dir = "etc",
+)
+
+container_image(
+    name = "go_image_base",
+    base = "@go_image_base//image",
+    tars = [":passwd_tar"],
+    user = "nonroot",
+    visibility = ["//visibility:public"],
+)
+
+container_push(
+    name = "push_image",
+    image = ":go_image",
+    format = "Docker",
+    registry = "gcr.io",
+    repository = "prysmaticlabs/prysmbot",
+    tag = "latest",
+)
