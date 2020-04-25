@@ -91,7 +91,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		return
 	}
-	if fullCommand == "help" {
+	if fullCommand == "help" && helpOkayChannel(m.ChannelID) {
 		embed := fullHelpEmbed()
 		_, err := s.ChannelMessageSendEmbed(m.ChannelID, embed)
 		if err != nil {
@@ -144,7 +144,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if command == "help" {
+	if command == "help" && helpOkayChannel(m.ChannelID) {
 		embed := specificHelpEmbed(reqGroup)
 		_, err := s.ChannelMessageSendEmbed(m.ChannelID, embed)
 		if err != nil {
@@ -176,17 +176,24 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
-func whitelistedChannel(channelID string) bool {
+func helpOkayChannel(channelID string) bool {
 	switch channelID {
 	case "691473296696410164":
 		return true
 	case "701148358445760573":
 		return true
-	case "476588476393848832": // #general in Prsym Discord.
-		return true
 	case "696886109589995521": // #random in Prsym Discord.
 		return true
 	default:
 		return false
+	}
+}
+
+func whitelistedChannel(channelID string) bool {
+	switch channelID {
+	case "476588476393848832": // #general in Prsym Discord.
+		return true
+	default:
+		return helpOkayChannel(channelID)
 	}
 }
