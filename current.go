@@ -50,7 +50,7 @@ func getHeadCommandResult(command string) string {
 		if command == currentParticipation.command || command == currentParticipation.shorthand{
 			return fmt.Sprintf(currentParticipation.responseText, participation.Epoch, participation.Participation.GlobalParticipationRate*100)
 		} else if command == currentTotalBalance.command || command == currentTotalBalance.shorthand{
-			inEther := participation.Participation.EligibleEther / params.BeaconConfig().GweiPerEth
+			inEther := float64(participation.Participation.EligibleEther) / float64(params.BeaconConfig().GweiPerEth)
 			return fmt.Sprintf(currentTotalBalance.responseText, participation.Epoch, inEther)
 		}
 	default:

@@ -40,8 +40,9 @@ var (
 	currentTotalBalance = &botCommand{
 		group: "current",
 		command: "totalBalance",
+		shorthand: "tb",
 		helpText: "Retrieves the sum of all validator balances in the current validator set.",
-		responseText: "Current total balance for epoch %d is %d ETH.",
+		responseText: "Current total balance for epoch %d is %.4f ETH.",
 	}
 	currentParticipation = &botCommand{
 		group: "current",
