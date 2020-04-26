@@ -73,7 +73,7 @@ var (
 		command: "balance",
 		shorthand: "b",
 		helpText: "Retrieves balance of requested validator.",
-		responseText: "Balance of validator %d is %v ETH.",
+		responseText: "Balance of validator %d is %.4f ETH.",
 	}
 	validatorActive = &botCommand{
 		group: "val",

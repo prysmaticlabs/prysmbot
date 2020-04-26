@@ -24,18 +24,34 @@ func getValidatorCommandResult(command string, parameters []string) string {
 			Index: uint64(reqIndex),
 		},
 	}
-	validator, err := beaconClient.GetValidator(context.Background(), req)
-	if err != nil {
-		log.WithError(err).Error(err, "failed to get committees")
-		return ""
-	}
 	switch command {
 	case validatorBalance.command, validatorBalance.shorthand:
-		inEther := validator.EffectiveBalance / params.BeaconConfig().GweiPerEth
-		return fmt.Sprintf(validatorBalance.responseText, reqIndex, inEther)
+		balReq := &eth.ListValidatorBalancesRequest{
+			Indices: []uint64{uint64(reqIndex)},
+		}
+		balances, err := beaconClient.ListValidatorBalances(context.Background(), balReq)
+		if err != nil {
+			log.WithError(err).Error(err, "failed to get balances")
+			return ""
+		}
+		if len(balances.Balances) > 0 && balances.Balances[0].Index == uint64(reqIndex) {
+			inEther :=  float64(balances.Balances[0].Balance) / float64(params.BeaconConfig().GweiPerEth)
+			return fmt.Sprintf(validatorBalance.responseText, reqIndex, inEther)
+		}
+		return fmt.Sprintf("Could not get balance of valdiator index %d", reqIndex)
 	case validatorActive.command, validatorActive.shorthand:
+		validator, err := beaconClient.GetValidator(context.Background(), req)
+		if err != nil {
+			log.WithError(err).Error(err, "failed to get validator")
+			return ""
+		}
 		return fmt.Sprintf(validatorActive.responseText, reqIndex, validator.ActivationEpoch)
 	case validatorSlashed.command, validatorSlashed.shorthand:
+		validator, err := beaconClient.GetValidator(context.Background(), req)
+		if err != nil {
+			log.WithError(err).Error(err, "failed to get validator")
+			return ""
+		}
 		resultText := "not slashed"
 		if validator.Slashed {
 			resultText = "slashed"
