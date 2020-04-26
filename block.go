@@ -45,6 +45,8 @@ func getBlockCommandResult(command string, parameters []string) string {
 			return fmt.Sprintf(blockGraffiti.responseText, reqSlot, graffiti)
 		case blockProposer.command, blockProposer.shorthand:
 			return fmt.Sprintf(blockProposer.responseText, reqSlot, block.Block.ProposerIndex)
+		default:
+			return ""
 		}
 	return ""
 }

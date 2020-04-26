@@ -112,6 +112,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	splitCommand := strings.Split(fullCommand, ".")
 	if fullCommand == splitCommand[0] {
 		return
+	} else if len(splitCommand) > 1 && strings.TrimSpace(splitCommand[1]) == "" {
+		return
 	}
 	commandGroup := splitCommand[0]
 	endOfCommand := strings.Index(splitCommand[1], " ")

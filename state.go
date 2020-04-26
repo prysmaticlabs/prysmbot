@@ -50,6 +50,7 @@ func getStateCommandResult(command string, parameters []string) string {
 			return fmt.Sprintf("Committee of slot %d and index %d could not be calculated.", reqSlot, reqIndex)
 		}
 		return fmt.Sprintf(beaconCommittee.responseText, reqSlot, reqIndex, resultCommittee)
+	default:
+		return ""
 	}
-	return ""
 }

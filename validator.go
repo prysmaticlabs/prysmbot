@@ -41,6 +41,7 @@ func getValidatorCommandResult(command string, parameters []string) string {
 			resultText = "slashed"
 		}
 		return fmt.Sprintf(validatorSlashed.responseText, reqIndex, resultText)
+	default:
+		return ""
 	}
-	return ""
 }

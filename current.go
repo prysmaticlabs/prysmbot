@@ -53,6 +53,8 @@ func getHeadCommandResult(command string) string {
 			inEther := participation.Participation.EligibleEther / params.BeaconConfig().GweiPerEth
 			return fmt.Sprintf(currentTotalBalance.responseText, participation.Epoch, inEther)
 		}
+	default:
+		return ""
 	}
 	return ""
 }
