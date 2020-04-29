@@ -1,6 +1,7 @@
 package main
 
 var foods = []string{
+	"Bahn Mi"
 	"Baked Beans",
 	"Beef Bourguignon With White Rice",
 	"Burger",
@@ -13,16 +14,27 @@ var foods = []string{
 	"Chicken Wings",
 	"Chili-Lime Salmon With Basmati Rice",
 	"Cumin Ground Lamb and Steamed Broccoli",
+	"Doner Kebab"
+	"Fajitas"
+	"Fish Tacos"
 	"Fried Chicken",
+	"Fried Rice"
 	"Fries",
 	"Grilled Cheese",
+	"Gyro"
 	"Hash Browns",
 	"Hotpot",
+	"Kathi Rolls"
+	"Japanese Curry"
+	"Jerk Chicken with Carbbiean Fried Rice"
 	"Kimchi Fried Rice",
+	"Mac & Cheese"
 	"Masala Dosa With Basmati Rice",
+	"Massaman Curry"
 	"Mediterranean Pita With Falafel and Hummus",
 	"Mexican Sandwich",
 	"Orange Chicken",
+	"Pad Thai"
 	"Pho",
 	"Pizza",
 	"Poke Bowl With Quinoa",
@@ -30,6 +42,7 @@ var foods = []string{
 	"Ramen",
 	"Ribeye",
 	"Ribs",
+	"Rissoto"
 	"Sandwich",
 	"Scrambled Eggs",
 	"Shandong Style, Pan-Fried Dumplings With Scallion Pancakges",
@@ -38,10 +51,12 @@ var foods = []string{
 	"Spaghetti",
 	"Stromboli",
 	"Sushi",
+	"Tandoori Chicken"
 	"Teriyaki Chicken",
 	"Tilapia With Jasmine Rice and Asparagus",
 	"Veal Milanese With Fresh Corn Polenta",
 	"Venezuelan Arepas",
+	"Wrap"
 	"Wings",
 	"Wonton Soup",
 }
