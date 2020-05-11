@@ -1,42 +1,62 @@
 package main
 
 var foods = []string{
-	"Bahn Mi"
+	"Bahn Mi",
 	"Baked Beans",
+	"Banana Pudding",
 	"Beef Bourguignon With White Rice",
+	"Bibimbap",
+	"Biscuits and Sausage Gravy",
+	"Biryani",
+	"Bulgogi",
 	"Burger",
+	"Burrito",
 	"Buttered Scallops With Hoisin Sauce",
 	"Calzone",
 	"Caprese Salad",
+	"Catfish Fry",
+	"Ceviche",
 	"Chicken Sandwich",
 	"Chicken Satay with Brown Rice",
 	"Chicken Tendies",
 	"Chicken Wings",
 	"Chili-Lime Salmon With Basmati Rice",
+	"Chow Fun",
+	"Cuban Sandwich",
 	"Cumin Ground Lamb and Steamed Broccoli",
-	"Doner Kebab"
-	"Fajitas"
-	"Fish Tacos"
+	"Doner Kebab",
+	"Fajitas",
+	"Falafel",
+	"Fish and Chips",
+	"Fish Tacos",
 	"Fried Chicken",
-	"Fried Rice"
+	"Fried Rice",
 	"Fries",
 	"Grilled Cheese",
-	"Gyro"
+	"Gumbo",
+	"Gyro",
+	"Gyoza",
 	"Hash Browns",
 	"Hotpot",
-	"Kathi Rolls"
-	"Japanese Curry"
-	"Jerk Chicken with Carbbiean Fried Rice"
+	"Hush Puppies",
+	"Kathi Rolls",
+	"Japanese Curry",
+	"Jerk Chicken with Carbbiean Fried Rice",
 	"Kimchi Fried Rice",
-	"Mac & Cheese"
+	"Lasagne alla Bolognese",
+	"Mac & Cheese",
 	"Masala Dosa With Basmati Rice",
-	"Massaman Curry"
+	"Massaman Curry",
 	"Mediterranean Pita With Falafel and Hummus",
 	"Mexican Sandwich",
 	"Orange Chicken",
-	"Pad Thai"
+	"Pad Thai",
+	"Paella",
+	"Parfait",
 	"Pho",
+	"Pierogis",
 	"Pizza",
+	"Po' boy",
 	"Poke Bowl With Quinoa",
 	"Quesadilla",
 	"Ramen",
@@ -46,19 +66,26 @@ var foods = []string{
 	"Sandwich",
 	"Scrambled Eggs",
 	"Shandong Style, Pan-Fried Dumplings With Scallion Pancakges",
+	"Shrimp and Grits",
 	"Soup",
 	"Steak",
 	"Spaghetti",
+	"Spring Rolls",
 	"Stromboli",
 	"Sushi",
-	"Tandoori Chicken"
+	"Tacos",
+	"Tamales",
+	"Tandoori Chicken",
+	"Tempura",
 	"Teriyaki Chicken",
 	"Tilapia With Jasmine Rice and Asparagus",
+	"Tonkatsu",
 	"Veal Milanese With Fresh Corn Polenta",
 	"Venezuelan Arepas",
-	"Wrap"
+	"Wrap",
 	"Wings",
 	"Wonton Soup",
+	"Yakitori",
 }
 
 var restaurants = []string{
