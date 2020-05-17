@@ -19,7 +19,7 @@ func getRandomResult(command string) string {
 	case randomFood.command, randomFood.shorthand:
 		return fmt.Sprintf(randomFood.responseText, foods[rand.Int()%len(foods)])
 	case randomRestaurant.command, randomRestaurant.shorthand:
-		return fmt.Sprintf(randomFood.responseText, restaurants[rand.Int()%len(foods)])
+		return fmt.Sprintf(randomFood.responseText, restaurants[rand.Int()%len(restaurants)])
 	default:
 		return ""
 	}

@@ -62,7 +62,7 @@ var foods = []string{
 	"Ramen",
 	"Ribeye",
 	"Ribs",
-	"Rissoto"
+	"Rissoto",
 	"Sandwich",
 	"Scrambled Eggs",
 	"Shandong Style, Pan-Fried Dumplings With Scallion Pancakges",
