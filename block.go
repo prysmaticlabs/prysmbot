@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"os"
 	"strconv"
 
 	eth "github.com/prysmaticlabs/ethereumapis/eth/v1alpha1"
@@ -18,7 +17,7 @@ func getBlockCommandResult(command string, parameters []string) string {
 		reqSlot, err := strconv.Atoi(parameters[0])
 		if err != nil {
 			log.WithError(err).Error(err, "failed to convert")
-			os.Exit(1)
+			return ""
 		}
 		req := &eth.ListBlocksRequest{
 			QueryFilter: &eth.ListBlocksRequest_Slot{
@@ -28,7 +27,7 @@ func getBlockCommandResult(command string, parameters []string) string {
 		blocks, err := beaconClient.ListBlocks(context.Background(), req)
 		if err != nil {
 			log.WithError(err).Error(err, "failed to get committees")
-			os.Exit(1)
+			return fmt.Sprintf("Could not get block %d.", reqSlot)
 		}
 		if len(blocks.BlockContainers) < 1 {
 			return fmt.Sprintf("No block found for slot %d", reqSlot)
