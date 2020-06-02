@@ -11,23 +11,23 @@ http_archive(
 
 http_archive(
     name = "io_bazel_rules_go",
+    sha256 = "513c12397db1bc9aa46dd62f02dd94b49a9b5d17444d49b5a04c5a89f3053c1c",
     urls = [
         "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/rules_go/releases/download/v0.19.5/rules_go-v0.19.5.tar.gz",
         "https://github.com/bazelbuild/rules_go/releases/download/v0.19.5/rules_go-v0.19.5.tar.gz",
     ],
-    sha256 = "513c12397db1bc9aa46dd62f02dd94b49a9b5d17444d49b5a04c5a89f3053c1c",
 )
 
 http_archive(
     name = "bazel_gazelle",
+    sha256 = "7fc87f4170011201b1690326e8c16c5d802836e3a0d617d8f75c3af2b23180c4",
     urls = [
         "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/bazel-gazelle/releases/download/0.18.2/bazel-gazelle-0.18.2.tar.gz",
         "https://github.com/bazelbuild/bazel-gazelle/releases/download/0.18.2/bazel-gazelle-0.18.2.tar.gz",
     ],
-    sha256 = "7fc87f4170011201b1690326e8c16c5d802836e3a0d617d8f75c3af2b23180c4",
 )
 
-load("@io_bazel_rules_go//go:deps.bzl", "go_rules_dependencies", "go_register_toolchains")
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
 
 go_rules_dependencies()
 
@@ -140,6 +140,13 @@ go_repository(
 )
 
 go_repository(
+    name = "in_gopkg_urfave_cli_v2",
+    importpath = "gopkg.in/urfave/cli.v2",
+    sum = "h1:OvXt/p4cdwNl+mwcWMq/AxaKFkhdxcjx+tx+qf4EOvY=",
+    version = "v2.0.0-20190806201727-b62605953717",
+)
+
+go_repository(
     name = "com_github_gorilla_websocket",
     importpath = "github.com/gorilla/websocket",
     sum = "h1:+/TMaTYc4QFitKJxsQ7Yye35DkWvkdLcvGKqM+x0Ufc=",
@@ -158,4 +165,59 @@ go_repository(
     importpath = "golang.org/x/text",
     sum = "h1:tW2bmiBqwgJj/UpqtC8EpXEZVYOwU0yG4iWbprSVAcs=",
     version = "v0.3.2",
+)
+
+go_repository(
+    name = "com_github_deckarep_golang_set",
+    commit = "cbaa98ba5575e67703b32b4b19f73c91f3c4159e",  # v1.7.1
+    importpath = "github.com/deckarep/golang-set",
+)
+
+go_repository(
+    name = "com_github_google_uuid",
+    commit = "0cd6bf5da1e1c83f8b45653022c74f71af0538a4",  # v1.1.1
+    importpath = "github.com/google/uuid",
+)
+
+go_repository(
+    name = "com_github_aristanetworks_goarista",
+    commit = "728bce664cf5dfb921941b240828f989a2c8f8e3",
+    importpath = "github.com/aristanetworks/goarista",
+)
+
+go_repository(
+    name = "com_github_btcsuite_btcd",
+    commit = "306aecffea325e97f513b3ff0cf7895a5310651d",
+    importpath = "github.com/btcsuite/btcd",
+)
+
+go_repository(
+    name = "com_github_rs_cors",
+    commit = "db0fe48135e83b5812a5a31be0eea66984b1b521",  # v1.7.0
+    importpath = "github.com/rs/cors",
+)
+
+go_repository(
+    name = "com_github_pborman_uuid",
+    commit = "8b1b92947f46224e3b97bb1a3a5b0382be00d31e",  # v1.2.0
+    importpath = "github.com/pborman/uuid",
+)
+
+go_repository(
+    name = "com_github_go_stack_stack",
+    commit = "2fee6af1a9795aafbe0253a0cfbdf668e1fb8a9a",  # v1.8.0
+    importpath = "github.com/go-stack/stack",
+)
+
+go_repository(
+    name = "com_github_ethereum_go_ethereum",
+    commit = "0beb54b2147b3473a4c55e5ce6f02643ce403b14",
+    importpath = "github.com/ethereum/go-ethereum",
+    # Note: go-ethereum is not bazel-friendly with regards to cgo. We have a
+    # a fork that has resolved these issues by disabling HID/USB support and
+    # some manual fixes for c imports in the crypto package. This is forked
+    # branch should be updated from time to time with the latest go-ethereum
+    # code.
+    remote = "https://github.com/prysmaticlabs/bazel-go-ethereum",
+    vcs = "git",
 )

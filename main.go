@@ -18,15 +18,24 @@ import (
 var (
 	Token string
 	APIUrl string
+	RPCUrl string
+	EncryptedPriv string
+	Password string
+	DBPath string
+
 	conn *grpc.ClientConn
 	beaconClient eth.BeaconChainClient
 	nodeClient eth.NodeClient
+
 	log = logrus.WithField("prefix", "prysmBot")
 )
 
 func init() {
 	flag.StringVar(&Token, "token", "", "Bot Token")
 	flag.StringVar(&APIUrl, "api-url", "", "API Url for gRPC")
+	flag.StringVar(&RPCUrl, "rpc-url", "", "RPC Url for Goerli network")
+	flag.StringVar(&EncryptedPriv, "private-key", "", "Private key for Goerli wallet")
+	flag.StringVar(&Password, "password", "", "Password for encrypted private key")
 	flag.Parse()
 }
 
@@ -41,10 +50,16 @@ func main() {
 	conn, err = grpc.Dial(APIUrl, grpc.WithInsecure())
 	if err != nil {
 		log.Error ("Failed to dial: %v", err)
+		return
 	}
 	beaconClient = eth.NewBeaconChainClient(conn)
 	nodeClient = eth.NewNodeClient(conn)
 	defer conn.Close()
+
+	if err := initWallet(); err != nil {
+		log.Error(err)
+		return
+	}
 
 	// Register the messageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(messageCreate)
@@ -111,8 +126,22 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	splitCommand := strings.Split(fullCommand, ".")
 	if fullCommand == splitCommand[0] {
+		splitCommand = strings.Split(fullCommand, " ")
+		if splitCommand[0] == "send" && goerliOkayChannel(m.ChannelID) {
+			resp, err := SendGoeth(splitCommand[1:])
+			if err != nil {
+				log.WithError(err).Error("Could not send goerli eth")
+				return
+			}
+			_, err = s.ChannelMessageSend(m.ChannelID, resp)
+			if err != nil {
+				log.WithError(err).Errorf("Error handling command %s", fullCommand)
+			}
+		}
 		return
-	} else if len(splitCommand) > 1 && strings.TrimSpace(splitCommand[1]) == "" {
+	}
+
+	if len(splitCommand) > 1 && strings.TrimSpace(splitCommand[1]) == "" {
 		return
 	}
 	commandGroup := splitCommand[0]
@@ -136,7 +165,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			cmdGroupFound = true
 			reqGroup = flagGroup
 			for _, cmd := range reqGroup.commands {
-				if command == cmd.command || command == cmd.shorthand || command == "help"{
+				if command == cmd.command || command == cmd.shorthand || command == "help" {
 					cmdFound = true
 				}
 			}
@@ -180,11 +209,21 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func helpOkayChannel(channelID string) bool {
 	switch channelID {
-	case "691473296696410164":
+	case prysmInternal:
 		return true
-	case "701148358445760573":
+	case personalTesting:
 		return true
-	case "696886109589995521": // #random in Prsym Discord.
+	case prysmRandom:
+		return true
+	default:
+		return false
+	}
+}
+
+
+func goerliOkayChannel(channelID string) bool {
+	switch channelID {
+	case personalTesting:
 		return true
 	default:
 		return false
@@ -193,7 +232,7 @@ func helpOkayChannel(channelID string) bool {
 
 func whitelistedChannel(channelID string) bool {
 	switch channelID {
-	case "476588476393848832": // #general in Prsym Discord.
+	case prysmGeneral:
 		return true
 	default:
 		return helpOkayChannel(channelID)
