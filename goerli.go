@@ -4,52 +4,27 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
-	"github.com/pkg/errors"
-	"math/big"
-	"strconv"
-
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/pkg/errors"
+	"math/big"
 )
 
-var depositAmount = 32
-var minimumRequestAmt = depositAmount + 1
 var etherInWei = big.NewInt(1000000000000000000)
-var maxETHToSend = 170
+var ethToSend = 165
 
 var addr common.Address
 var key *ecdsa.PrivateKey
 var web3 *ethclient.Client
 
 func SendGoeth(parameters []string) (string, error) {
-	if len(parameters) > 2 {
-		return "This command requires 2 parameters", nil
+	if len(parameters) < 1 {
+		return "This command requires 1 parameters", nil
 	}
 	address := parameters[0]
-	var amountETH int
-	var err error
-	if len(parameters) == 2 {
-		amountETH, err = strconv.Atoi(parameters[1])
-		if err != nil {
-			return "", errors.Wrap(err, "could not parse")
-		}
-	} else {
-		amountETH = maxETHToSend
-	}
-	if amountETH % depositAmount == 0 {
-		if amountETH == depositAmount {
-			amountETH = minimumRequestAmt
-		} else {
-			// Give an extra eth for gas fees if they request a perfect multiple.
-			amountETH += 1
-		}
-	}
-	if amountETH > maxETHToSend {
-		return fmt.Sprintf("Sorry! Only up to %d GoETH at a time!", maxETHToSend), nil
-	}
 	if !common.IsHexAddress(address) {
 		return "Please enter a valid address!", nil
 	}
@@ -60,7 +35,7 @@ func SendGoeth(parameters []string) (string, error) {
 		return "", errors.Wrap(err, "could not get account balance")
 	}
 
-	minBalance := big.NewInt(int64(amountETH))
+	minBalance := big.NewInt(int64(ethToSend))
 	minBalance.Mul(minBalance, etherInWei)
 	if bal.Cmp(minBalance) < 0 {
 		return "Goerli Wallet is out of Ether! <@118185622543269890>", nil
@@ -70,7 +45,7 @@ func SendGoeth(parameters []string) (string, error) {
 		return "", err
 	}
 	value := big.NewInt(0) // in wei (1 eth)
-	value.Mul(etherInWei, big.NewInt(int64(amountETH)))
+	value.Mul(etherInWei, big.NewInt(int64(ethToSend)))
 	gasLimit := uint64(21000) // in units
 	gasPrice, err := web3.SuggestGasPrice(context.Background())
 	if err != nil {
@@ -89,7 +64,7 @@ func SendGoeth(parameters []string) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "could not send")
 	}
-	return fmt.Sprintf("Sent! https://goerli.etherscan.io/tx/%s", signedTx.Hash().String()), nil
+	return fmt.Sprintf("Sent %d ETH! https://goerli.etherscan.io/tx/%s", ethToSend,signedTx.Hash().String()), nil
 }
 
 func initWallet() error {
