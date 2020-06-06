@@ -21,6 +21,9 @@ var key *ecdsa.PrivateKey
 var web3 *ethclient.Client
 
 func SendGoeth(parameters []string) (string, error) {
+	if web3 == nil {
+		return "Web3 is not enabled", nil
+	}
 	if len(parameters) < 1 {
 		return "This command requires 1 parameters", nil
 	}
@@ -69,6 +72,9 @@ func SendGoeth(parameters []string) (string, error) {
 
 func initWallet() error {
 	var err error
+	if EncryptedPriv == "" || RPCUrl == "" {
+		return nil
+	}
 	if Password != "" {
 		goerliKey, err := keystore.DecryptKey([]byte(EncryptedPriv), Password /*password*/)
 		if err != nil {
