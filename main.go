@@ -225,6 +225,8 @@ func goerliOkayChannel(channelID string) bool {
 	switch channelID {
 	case personalTesting:
 		return true
+	case prysmGoerli:
+		return true
 	default:
 		return false
 	}
