@@ -236,6 +236,8 @@ func whitelistedChannel(channelID string) bool {
 	switch channelID {
 	case prysmGeneral:
 		return true
+	case prysmGoerli:
+		return true
 	default:
 		return helpOkayChannel(channelID)
 	}
