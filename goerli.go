@@ -15,6 +15,7 @@ import (
 
 var etherInWei = big.NewInt(1000000000000000000)
 var ethToSend = 165
+var maxGoerliBalance = 320
 
 var walletAddr common.Address
 var key *ecdsa.PrivateKey
@@ -43,6 +44,17 @@ func SendGoeth(parameters []string) (string, error) {
 	if bal.Cmp(minBalance) < 0 {
 		return fmt.Sprintf("Goerli Wallet %s is out of Ether! <@118185622543269890>", walletAddr.String()), nil
 	}
+	userBal, err := web3.BalanceAt(context.Background(), toAddress, nil)
+	if err != nil {
+		return "", errors.Wrap(err, "could not get account balance")
+	}
+
+	minUserBalance := big.NewInt(int64(maxGoerliBalance))
+	minUserBalance.Mul(minBalance, etherInWei)
+	if userBal.Cmp(minUserBalance) < 0 {
+		return "", nil
+	}
+
 	nonce, err := web3.PendingNonceAt(context.Background(), walletAddr)
 	if err != nil {
 		return "", err
