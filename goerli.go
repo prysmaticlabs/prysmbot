@@ -16,7 +16,7 @@ import (
 var etherInWei = big.NewInt(1000000000000000000)
 var ethToSend = 165
 
-var addr common.Address
+var walletAddr common.Address
 var key *ecdsa.PrivateKey
 var web3 *ethclient.Client
 
@@ -33,7 +33,7 @@ func SendGoeth(parameters []string) (string, error) {
 	}
 	toAddress := common.HexToAddress(address)
 
-	bal, err := web3.BalanceAt(context.Background(), addr, nil)
+	bal, err := web3.BalanceAt(context.Background(), walletAddr, nil)
 	if err != nil {
 		return "", errors.Wrap(err, "could not get account balance")
 	}
@@ -41,9 +41,9 @@ func SendGoeth(parameters []string) (string, error) {
 	minBalance := big.NewInt(int64(ethToSend))
 	minBalance.Mul(minBalance, etherInWei)
 	if bal.Cmp(minBalance) < 0 {
-		return "Goerli Wallet is out of Ether! <@118185622543269890>", nil
+		return fmt.Sprintf("Goerli Wallet %s is out of Ether! <@118185622543269890>", walletAddr.String()), nil
 	}
-	nonce, err := web3.PendingNonceAt(context.Background(), addr)
+	nonce, err := web3.PendingNonceAt(context.Background(), walletAddr)
 	if err != nil {
 		return "", err
 	}
@@ -81,7 +81,7 @@ func initWallet() error {
 			return err
 		}
 		key = goerliKey.PrivateKey
-		addr = goerliKey.Address
+		walletAddr = goerliKey.Address
 	} else {
 		key, err = crypto.HexToECDSA(EncryptedPriv)
 		if err != nil {
@@ -93,7 +93,7 @@ func initWallet() error {
 			log.Fatal("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
 		}
 
-		addr = crypto.PubkeyToAddress(*publicKeyECDSA)
+		walletAddr = crypto.PubkeyToAddress(*publicKeyECDSA)
 	}
 
 	web3, err = ethclient.Dial(RPCUrl)
