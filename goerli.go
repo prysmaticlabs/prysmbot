@@ -14,7 +14,7 @@ import (
 )
 
 var etherInWei = big.NewInt(1000000000000000000)
-var ethToSend = 165
+var ethToSend = 33
 var maxGoerliBalance = 320
 
 var walletAddr common.Address
