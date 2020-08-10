@@ -50,8 +50,8 @@ func SendGoeth(parameters []string) (string, error) {
 	}
 
 	minUserBalance := big.NewInt(int64(maxGoerliBalance))
-	minUserBalance.Mul(minBalance, etherInWei)
-	if userBal.Cmp(minUserBalance) < 0 {
+	minUserBalance.Mul(minUserBalance, etherInWei)
+	if userBal.Cmp(minUserBalance) > 0 {
 		return "", nil
 	}
 
