@@ -16,16 +16,16 @@ import (
 
 // Variables used for command line parameters
 var (
-	Token string
-	APIUrl string
-	RPCUrl string
+	Token         string
+	APIUrl        string
+	RPCUrl        string
 	EncryptedPriv string
-	Password string
-	DBPath string
+	Password      string
+	DBPath        string
 
-	conn *grpc.ClientConn
+	conn         *grpc.ClientConn
 	beaconClient eth.BeaconChainClient
-	nodeClient eth.NodeClient
+	nodeClient   eth.NodeClient
 
 	log = logrus.WithField("prefix", "prysmBot")
 )
@@ -49,7 +49,7 @@ func main() {
 
 	conn, err = grpc.Dial(APIUrl, grpc.WithInsecure())
 	if err != nil {
-		log.Error ("Failed to dial: %v", err)
+		log.Error("Failed to dial: %v", err)
 		return
 	}
 	beaconClient = eth.NewBeaconChainClient(conn)
@@ -84,7 +84,7 @@ func main() {
 // This function will be called (due to AddHandler above) every time a new
 // message is created on any channel that the autenticated bot has access to.
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if !whitelistedChannel(m.ChannelID)  {
+	if !whitelistedChannel(m.ChannelID) {
 		return
 	}
 	// Ignore all messages created by the bot itself
@@ -95,6 +95,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Ignore all messages that don't start with "!".
 	if !strings.HasPrefix(m.Content, "!") {
 		return
+	}
+	if err := s.ChannelTyping(m.ChannelID); err != nil {
+		log.WithError(err).Error("Cannot send typing notification to channel")
 	}
 
 	fullCommand := m.Content[1:]
@@ -219,7 +222,6 @@ func helpOkayChannel(channelID string) bool {
 		return false
 	}
 }
-
 
 func goerliOkayChannel(channelID string) bool {
 	switch channelID {
