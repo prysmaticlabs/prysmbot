@@ -22,6 +22,7 @@ go_library(
         "random.go",
         "state.go",
         "types.go",
+        "user.go",
         "validator.go",
     ],
     importpath = "github.com/prysmaticlabs/prysmbot",
