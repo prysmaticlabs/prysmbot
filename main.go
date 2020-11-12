@@ -22,6 +22,8 @@ var (
 	EncryptedPriv string
 	Password      string
 	DBPath        string
+	DenylistPath  string
+	Debug         bool
 
 	conn         *grpc.ClientConn
 	beaconClient eth.BeaconChainClient
@@ -36,7 +38,14 @@ func init() {
 	flag.StringVar(&RPCUrl, "rpc-url", "", "RPC Url for Goerli network")
 	flag.StringVar(&EncryptedPriv, "private-key", "", "Private key for Goerli wallet")
 	flag.StringVar(&Password, "password", "", "Password for encrypted private key")
+	flag.StringVar(&DenylistPath, "denylist", "", "Filepath to denylist of regular expressions")
+	flag.BoolVar(&Debug, "debug", false, "Enable debug logging")
 	flag.Parse()
+
+	if Debug {
+		logrus.SetLevel(logrus.DebugLevel)
+		log.Debug("Debug logging enabled.")
+	}
 }
 
 func main() {
@@ -63,6 +72,10 @@ func main() {
 
 	// Register the messageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(messageCreate)
+	dg.AddHandler(messageReaction)
+
+	// Monitor denylist changes
+	go monitorDenylistFile(DenylistPath)
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
@@ -84,12 +97,14 @@ func main() {
 // This function will be called (due to AddHandler above) every time a new
 // message is created on any channel that the autenticated bot has access to.
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if !whitelistedChannel(m.ChannelID) {
+	// Ignore all messages created by the bot itself
+	if m.Author.ID == s.State.User.ID {
 		return
 	}
-	// Ignore all messages created by the bot itself
-	// This isn't required in this specific example but it's a good practice.
-	if m.Author.ID == s.State.User.ID {
+	if deniedMessage(s, m) {
+		return
+	}
+	if !whitelistedChannel(m.ChannelID) {
 		return
 	}
 	// Ignore all messages that don't start with "!".
@@ -248,4 +263,12 @@ func whitelistedChannel(channelID string) bool {
 	default:
 		return helpOkayChannel(channelID)
 	}
+}
+
+func messageReaction(s *discordgo.Session, m *discordgo.MessageReactionAdd) {
+	// Ignore reactions by the bot.
+	if m.UserID == s.State.User.ID {
+		return
+	}
+	handleDenyListMessageReaction(s, m)
 }

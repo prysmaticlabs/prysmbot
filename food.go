@@ -18,6 +18,7 @@ var foods = []string{
 	"Chicken Tendies",
 	"Chicken Wings",
 	"Chow Fun",
+	"Cold Pizza :pizza:",
 	"Cuban Sandwich",
 	"Doner Kebab",
 	"Fajitas",
