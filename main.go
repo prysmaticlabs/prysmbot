@@ -3,10 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	eth "github.com/prysmaticlabs/ethereumapis/eth/v1alpha1"
@@ -56,26 +58,28 @@ func main() {
 		return
 	}
 
-	conn, err = grpc.Dial(APIUrl, grpc.WithInsecure())
-	if err != nil {
-		log.Error("Failed to dial: %v", err)
-		return
-	}
-	beaconClient = eth.NewBeaconChainClient(conn)
-	nodeClient = eth.NewNodeClient(conn)
-	defer conn.Close()
+	//conn, err = grpc.Dial(APIUrl, grpc.WithInsecure())
+	//if err != nil {
+	//	log.Error("Failed to dial: %v", err)
+	//	return
+	//}
+	//beaconClient = eth.NewBeaconChainClient(conn)
+	//nodeClient = eth.NewNodeClient(conn)
+	//defer conn.Close()
+	//
+	//if err := initWallet(); err != nil {
+	//	log.Error(err)
+	//	return
+	//}
 
-	if err := initWallet(); err != nil {
-		log.Error(err)
-		return
-	}
-
+	log.Println("start")
 	// Register the messageCreate func as a callback for MessageCreate events.
-	dg.AddHandler(messageCreate)
-	dg.AddHandler(messageReaction)
+	//dg.AddHandler(messageCreate)
+	//dg.AddHandler(messageReaction)
+	dg.AddHandler(userJoin)
 
 	// Monitor denylist changes
-	go monitorDenylistFile(DenylistPath)
+	//go monitorDenylistFile(DenylistPath)
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
@@ -94,6 +98,36 @@ func main() {
 	dg.Close()
 }
 
+func userJoin(s *discordgo.Session, u *discordgo.MessageCreate) {
+	if u.GuildID != "789404844711739412" {
+		return
+	}
+	if u.Message.Type != discordgo.MessageTypeGuildMemberJoin {
+		return
+	}
+
+	ch, err := 	s.UserChannelCreate(u.Author.ID)
+	if err != nil {
+		log.Errorf("could not channel: %v", err)
+		return
+	}
+	var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
+	_, err = s.ChannelMessageSend(ch.ID, fmt.Sprintf("Hey! Type %d to join this server!", seededRand.Uint64()%10000000))
+	if err != nil {
+		log.Errorf("Could not send message: %v", err)
+		return
+	}
+	_ , err = s.ChannelMessageSend("789404845161316363", fmt.Sprintf("%s joined!", u.Author.Username))
+	if err != nil {
+		log.Errorf("Could not send: %v", err)
+	}
+	log.Println("join")
+	// Make sure join is for this server.
+	//if u.GuildID != "476244492043812875" {
+	//	return
+	//}
+	log.Println("send")
+}
 // This function will be called (due to AddHandler above) every time a new
 // message is created on any channel that the autenticated bot has access to.
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
