@@ -34,6 +34,8 @@ var (
 	log = logrus.WithField("prefix", "prysmBot")
 )
 
+var usersToVerify = make(map[string]uint64)
+
 func init() {
 	flag.StringVar(&Token, "token", "", "Bot Token")
 	flag.StringVar(&APIUrl, "api-url", "", "API Url for gRPC")
