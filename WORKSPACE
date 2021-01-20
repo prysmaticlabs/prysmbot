@@ -64,8 +64,8 @@ protobuf_deps()
 go_repository(
     name = "com_github_bwmarrin_discordgo",
     importpath = "github.com/bwmarrin/discordgo",
-    sum = "h1:AxjcHGbyBFSC0a3Zx5nDQwbOjU7xai5dXjRnZ0YB7nU=",
-    version = "v0.20.3",
+    sum = "h1:254fNYyfqJWKbPzO5g8j/nUvRgj4dNlI19EB8rnkpt8=",
+    version = "v0.22.1",
 )
 
 go_repository(

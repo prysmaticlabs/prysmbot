@@ -15,6 +15,7 @@ go_library(
         "channels.go",
         "commands.go",
         "current.go",
+        "deleted.go",
         "denylist.go",
         "food.go",
         "goerli.go",
