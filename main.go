@@ -282,6 +282,5 @@ func messageReaction(s *discordgo.Session, m *discordgo.MessageReactionAdd) {
 }
 
 func messageDelete(s *discordgo.Session, m *discordgo.MessageDelete) {
-	log.Debug("A message was deleted")
 	handleMessageDeleted(s, m)
 }
