@@ -1,2 +1,3 @@
 # PrysmBot
-Discord bot written in go for interacting with the beacon chain
+
+**ARCHIVED**. This project has now moved to [github.com/prysmaticlabs/periphery](https://github.com/prysmaticlabs/periphery).
