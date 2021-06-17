@@ -32,6 +32,11 @@ var (
 	log = logrus.WithField("prefix", "prysmBot")
 )
 
+const (
+	// MaxMessageCount is the number of messages to keep in the state / memory.
+	MaxMessageCount = 10000
+)
+
 func init() {
 	flag.StringVar(&Token, "token", "", "Bot Token")
 	flag.StringVar(&APIUrl, "api-url", "", "API Url for gRPC")
@@ -70,9 +75,12 @@ func main() {
 		return
 	}
 
+	dg.State.MaxMessageCount = MaxMessageCount
+
 	// Register the messageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(messageCreate)
 	dg.AddHandler(messageReaction)
+	dg.AddHandler(messageDelete)
 
 	// Monitor denylist changes
 	go monitorDenylistFile(DenylistPath)
@@ -271,4 +279,8 @@ func messageReaction(s *discordgo.Session, m *discordgo.MessageReactionAdd) {
 		return
 	}
 	handleDenyListMessageReaction(s, m)
+}
+
+func messageDelete(s *discordgo.Session, m *discordgo.MessageDelete) {
+	handleMessageDeleted(s, m)
 }
