@@ -6,12 +6,15 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+const footerText = "Powered by the Medalla Testnet"
+const footerImg = "https://prysmaticlabs.com/assets/PrysmStripe.png"
+
 func fullHelpEmbed() *discordgo.MessageEmbed {
 	embed := &discordgo.MessageEmbed{}
 	embed.Title = "PrysmBot help"
 	embed.Footer = &discordgo.MessageEmbedFooter{
-		Text: "Powered by the Topaz Testnet",
-		IconURL: "https://prysmaticlabs.com/assets/PrysmStripe.png",
+		Text:    footerText,
+		IconURL: footerImg,
 	}
 
 	var fields []*discordgo.MessageEmbedField
@@ -31,8 +34,8 @@ func specificHelpEmbed(requestedGroup *botCommandGroup) *discordgo.MessageEmbed 
 	embed := &discordgo.MessageEmbed{}
 	embed.Title = fmt.Sprintf("%s Command Help", requestedGroup.displayName)
 	embed.Footer = &discordgo.MessageEmbedFooter{
-		Text: "Powered by the Topaz Testnet",
-		IconURL: "https://prysmaticlabs.com/assets/PrysmStripe.png",
+		Text:    footerText,
+		IconURL: footerImg,
 	}
 
 	var fields []*discordgo.MessageEmbedField
